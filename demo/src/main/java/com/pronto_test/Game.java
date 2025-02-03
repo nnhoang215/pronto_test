@@ -1,0 +1,134 @@
+package com.pronto_test;
+import java.util.*;
+import java.nio.file.*;
+import java.io.IOException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.*;
+
+public class Game implements BankruptcyListener {
+  private List<Player> players;
+  private Player currentPlayer;
+  private int currentPlayerIndex;
+  private List<Integer> diceRolls;
+  private Board board;
+  private boolean isGameOver = false;
+  
+  @Override
+  public void onBankruptcy(Player player) {
+    Util.log(player.getName() + " is bankrupt! Game Over!");
+    endGame();
+  }
+  // Constructor to create a new game with a list of players
+  public Game(String[] playerNames, Board board) {
+    this.board = board;
+    players = new ArrayList<Player>();
+    
+    for (String n : playerNames) {
+      players.add(new Player(n, 16, 0, this));
+    }
+    currentPlayerIndex = 0;
+    currentPlayer = this.getPlayerByIndex(currentPlayerIndex);
+
+    try {
+      loadDiceRolls("demo/rolls_2.json");
+    } catch (IOException e) {
+      System.out.println("Error loading dice rolls: " + e);
+    }
+  }
+
+  // Load dice rolls from a file
+ private void loadDiceRolls(String path) throws IOException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    try {
+      String json = Files.readString(Paths.get(path));
+      diceRolls = objectMapper.readValue(json, new TypeReference<List<Integer>>() {});
+    } catch (IOException e) {
+      throw e;
+    }
+  }
+
+  public Player getCurrentPlayer() {
+    return currentPlayer;
+  }
+
+  public void play() {
+    while (!isGameOver) {
+      int roll = getNextRoll();
+      movePlayer(this.currentPlayer, roll);
+      nextTurn();
+    }
+
+    showResults();
+  }
+
+  public void endGame() {
+    this.isGameOver = true;
+  }
+
+  private void showResults() {
+    Util.log("============================================");
+    Util.log("Game Over! Results are below:");
+    List<Player> richestPlayers = new ArrayList<>();
+    int highestBalance = Integer.MIN_VALUE;
+
+    for (Player player : players) {
+      if (player.getBalance() > highestBalance) {
+        richestPlayers.clear();
+        richestPlayers.add(player);
+        highestBalance = player.getBalance();
+      } else if (player.getBalance() == highestBalance) {
+        richestPlayers.add(player);
+      }
+
+      Util.log(player.toString());
+    }
+    Util.log("The winner(s): ");
+    for (Player player : richestPlayers) {
+      Util.log(player.getName() + " with a balance of $" + player.getBalance());
+    }
+    
+  }
+
+  private void movePlayer(Player player, int roll) {
+    // calculate position
+    int oldPosition = player.getPosition();
+    int newPosition = (oldPosition + roll) % board.getBoardSize();
+    
+    player.setPosition(newPosition);
+    Tile currentTile = board.getTile(newPosition);
+
+    // Check if player passed Go (except for the first move)
+    // Assuming that a player cannot overlap himself after a turn.
+    if (newPosition < oldPosition) {
+      GoTile.passGo(player);
+      // TODO: Remove
+      Util.log(player.getName() + " passed Go and collected $1.");
+    }
+    
+    currentTile.onArrive(player, board);
+  }
+
+  public void nextTurn() {
+    if (currentPlayerIndex == players.size() - 1) {
+      currentPlayerIndex = 0;
+    } else {
+      currentPlayerIndex++;
+    }
+    currentPlayer = this.getPlayerByIndex(currentPlayerIndex);
+  }
+
+  private int getNextRoll() {
+    int roll = diceRolls.get(0);
+    diceRolls.remove(0);
+    return roll;
+  }
+
+  private Player getPlayerByIndex(int index) {
+    // if (index < 0) TODO: throw exception
+    if (index >= players.size()) {
+      index = index % players.size();
+    }
+
+    return players.get(index);
+  }
+}
