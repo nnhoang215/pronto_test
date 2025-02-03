@@ -16,6 +16,12 @@ public class Board {
   public Board(String boardUrl) {
     this.tiles = new ArrayList<Tile>();
     this.boardUrl = boardUrl;
+    
+    try {
+      loadBoard();
+    } catch (IOException e) {
+      Util.log("Error loading board: " + e);
+    }
   }
 
   // Returns the size of the board (number of tiles)
@@ -34,7 +40,7 @@ public class Board {
   }
 
   // Loads the board from a file
-  public void loadBoard() throws IOException {
+  private void loadBoard() throws IOException {
     try {
       // Read the JSON content from the file
       String json = Files.readString(Paths.get(boardUrl));
@@ -56,5 +62,10 @@ public class Board {
     } catch (IOException e) {
       throw e;
     }
+  }
+
+  // Method for testing only
+  public void addTile(Tile tile) {
+    tiles.add(tile);
   }
 }

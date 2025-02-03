@@ -14,6 +14,7 @@ public class Game implements BankruptcyListener {
   private List<Integer> diceRolls;
   private Board board;
   private boolean isGameOver = false;
+  public List<Player> richestPlayers; // for testing only
   
   @Override
   public void onBankruptcy(Player player) {
@@ -24,7 +25,7 @@ public class Game implements BankruptcyListener {
   // Constructor to create a new game with a list of players
   public Game(String[] playerNames, Board board, String diceRollsPath) {
     this.board = board;
-    players = new ArrayList<Player>();
+    this.players = new ArrayList<Player>();
     
     // Initialize players with the given names
     for (String n : playerNames) {
@@ -39,6 +40,10 @@ public class Game implements BankruptcyListener {
     } catch (IOException e) {
       System.out.println("Error loading dice rolls: " + e);
     }
+  }
+
+  public List<Player> getPlayers() {
+    return this.players;
   }
 
   // Load dice rolls from a file
@@ -78,7 +83,7 @@ public class Game implements BankruptcyListener {
   private void showResults() {
     Util.log("============================================");
     Util.log("Game Over! Results are below:");
-    List<Player> richestPlayers = new ArrayList<>();
+    richestPlayers = new ArrayList<>();
     int highestBalance = Integer.MIN_VALUE;
 
     // Determine the richest player(s)
@@ -135,11 +140,19 @@ public class Game implements BankruptcyListener {
   }
 
   // Get player by index
-  private Player getPlayerByIndex(int index) {
+  public Player getPlayerByIndex(int index) {
     if (index >= players.size()) {
       index = index % players.size();
     }
 
     return players.get(index);
+  }
+
+  public boolean isGameOver() {
+    return isGameOver;
+  }
+
+  public Board getBoard() {
+    return this.board;
   }
 }

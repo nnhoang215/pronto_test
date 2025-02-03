@@ -3,7 +3,7 @@ package com.pronto_test;
 public class Player {
   private String name; // The name of the player
   private int balance; // The current balance of the player
-  private int position = 0; // The current position of the player on the board
+  private int position; // The current position of the player on the board
   private BankruptcyListener listener; // Listener to handle bankruptcy events
   
   // Constructor to initialize the player with name, initial cash, position, and bankruptcy listener

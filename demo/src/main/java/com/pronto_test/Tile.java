@@ -40,13 +40,13 @@ class PropertyTile extends Tile {
   private boolean isDoubleRent = false;
   private int rent;
   private String colour;
-  Player owner;
+  private Player owner;
 
   // Constructor to initialize the PropertyTile with a name, rent, and colour
   PropertyTile(String name, int rent, String colour) {
     this.name = name;
     this.rent = rent;
-    this.colour = colour;
+    this.colour = colour.trim();
   }
 
   // Override toString method to provide a string representation of the PropertyTile
@@ -85,7 +85,7 @@ class PropertyTile extends Tile {
     for (Tile tile : board.getTiles()) {
       if (tile instanceof PropertyTile) {
         PropertyTile pTile = (PropertyTile) tile;
-        if (pTile.getColour().equals(this.colour)) {
+        if (pTile.getColour().toLowerCase().equals(this.colour.toLowerCase())) {
           sameColourTiles.add(pTile);
         }
       }
@@ -111,5 +111,13 @@ class PropertyTile extends Tile {
     int currentBalance = player.getBalance();
     player.pay(amount);
     owner.receiveRent(Math.min(amount, currentBalance));
+  }
+
+  public void setOwner(Player owner) {
+    this.owner = owner;
+  }
+
+  public Player getOwner() {
+    return this.owner;
   }
 }
