@@ -56,3 +56,10 @@ Despite this being a small command line app, please approach this as you would a
 # Things I would change in my program
 * Clean up some of the logging which are in place to boost user experience. By cleaning them up, I could make my code more easily readable.
 * I could optimize the handlePurchase() method to assess double rent furthermore.
+
+# How to run
+* Requirement: Java17
+* clone the project from "https://github.com/nnhoang215/pronto_test.git"
+* change directory to '/demo/target'
+* run either "rolls_1.jar" or "rolls_2.jar" with command "java -jar rolls_1.jar" or "java -jar rolls_2.jar"
+* if you want to run with a different rolls.json, you can change /demo/target/demo/rolls_1.json content.
