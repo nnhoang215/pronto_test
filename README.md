@@ -17,4 +17,4 @@
 * clone the project from "https://github.com/nnhoang215/pronto_test.git"
 * change directory to '/demo/target'
 * run either "rolls_1.jar" or "rolls_2.jar" with command "java -jar rolls_1.jar" or "java -jar rolls_2.jar"
-* if you want to run with a different rolls.json, you can change /demo/target/demo/rolls_1.json content.
+* if you want to run with a different rolls.json, you can change /demo/target/demo/rolls_1.json content and then run 'rolls_1.json'
